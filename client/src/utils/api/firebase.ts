@@ -6,7 +6,7 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDfjtcGrIWCH7F9WFC9LCFnEehQuZWJxOI",
+  apiKey: process.env.FIREBASE_API,
   authDomain: "budget-tracker-e5b3d.firebaseapp.com",
   projectId: "budget-tracker-e5b3d",
   storageBucket: "budget-tracker-e5b3d.firebasestorage.app",
