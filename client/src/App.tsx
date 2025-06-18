@@ -5,12 +5,9 @@ import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import Profile from "./pages/Profile";
 import SidePanel from "./components/SidePanel";
-<<<<<<< HEAD
-=======
 import dotenv from "dotenv";
 
 dotenv.config();
->>>>>>> 15cde24 (API setup)
 
 function App() {
   return (
