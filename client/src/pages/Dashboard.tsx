@@ -231,11 +231,24 @@ export default function DashboardPage() {
             <CardContent>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">Recent Transactions</h3>
-                <NavLink to="/transactions">
-                  <Button variant="outline" size="sm">
-                    View All
-                  </Button>
-                </NavLink>
+                {
+                  <NavLink
+                    to="/transactions"
+                    onClick={(e) => {
+                      if (transactions.length === 0 && !loading) {
+                        e.preventDefault();
+                      }
+                    }}
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={transactions.length === 0}
+                    >
+                      View All
+                    </Button>
+                  </NavLink>
+                }
               </div>
               <div className="space-y-3 max-h-80 overflow-y-auto">
                 {/* Empty Handling */}
@@ -272,88 +285,98 @@ export default function DashboardPage() {
           <Card className="bg-white border border-[#e2e8f0] ">
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold mb-4">Monthly Overview</h3>
-              <ResponsiveContainer width="100%" height={250}>
-                <AreaChart
-                  data={monthlyData}
-                  margin={{ top: 0, right: 10, left: 30, bottom: 0 }}
-                >
-                  <defs>
-                    <linearGradient
-                      id="incomeGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="5%"
-                        stopColor={colors.mint}
-                        stopOpacity={0.8}
-                      />
-                      <stop
-                        offset="95%"
-                        stopColor={colors.mint}
-                        stopOpacity={0.1}
-                      />
-                    </linearGradient>
-                    <linearGradient
-                      id="expenseGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="5%"
-                        stopColor={colors.coral}
-                        stopOpacity={0.8}
-                      />
-                      <stop
-                        offset="95%"
-                        stopColor={colors.coral}
-                        stopOpacity={0.1}
-                      />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis
-                    dataKey="day"
-                    stroke="#6B7280"
-                    label={{
-                      value: "Date",
-                      position: "insideBottomRight",
-                      offset: -10,
-                      style: { fill: "#64748b", fontSize: 12 },
-                    }}
-                  />
-                  <YAxis
-                    stroke="#6B7280"
-                    label={{
-                      value: "Total (PKR)",
-                      position: "insideLeft",
-                      angle: -90,
-                      offset: -25,
-                      style: { fill: "#64748b", fontSize: 12 },
-                    }}
-                  />
-                  <Tooltip />
-                  <Legend verticalAlign="bottom" />
-                  <Area
-                    type="monotone"
-                    dataKey="income"
-                    stroke={colors.mint}
-                    fillOpacity={1}
-                    fill="url(#incomeGradient)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="expenses"
-                    stroke={colors.coral}
-                    fillOpacity={1}
-                    fill="url(#expenseGradient)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              {transactions.length === 0 && !loading && (
+                <div className="flex gap-2">
+                  <Frown className="text-gray-600" />
+                  <span className="italic text-gray-600">
+                    Add Expense/Income for insights.
+                  </span>
+                </div>
+              )}
+              {transactions.length != 0 && (
+                <ResponsiveContainer width="100%" height={250}>
+                  <AreaChart
+                    data={monthlyData}
+                    margin={{ top: 0, right: 10, left: 30, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient
+                        id="incomeGradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor={colors.mint}
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor={colors.mint}
+                          stopOpacity={0.1}
+                        />
+                      </linearGradient>
+                      <linearGradient
+                        id="expenseGradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor={colors.coral}
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor={colors.coral}
+                          stopOpacity={0.1}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                    <XAxis
+                      dataKey="day"
+                      stroke="#6B7280"
+                      label={{
+                        value: "Date",
+                        position: "insideBottomRight",
+                        offset: -10,
+                        style: { fill: "#64748b", fontSize: 12 },
+                      }}
+                    />
+                    <YAxis
+                      stroke="#6B7280"
+                      label={{
+                        value: "Total (PKR)",
+                        position: "insideLeft",
+                        angle: -90,
+                        offset: -25,
+                        style: { fill: "#64748b", fontSize: 12 },
+                      }}
+                    />
+                    <Tooltip />
+                    <Legend verticalAlign="bottom" />
+                    <Area
+                      type="monotone"
+                      dataKey="income"
+                      stroke={colors.mint}
+                      fillOpacity={1}
+                      fill="url(#incomeGradient)"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="expenses"
+                      stroke={colors.coral}
+                      fillOpacity={1}
+                      fill="url(#expenseGradient)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
             </CardContent>
           </Card>
 

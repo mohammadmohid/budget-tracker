@@ -32,7 +32,7 @@ export function AddExpenseDialog({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    amount: "",
+    amount: 0.0,
     category: "",
     description: "",
     date: new Date(),
@@ -65,7 +65,7 @@ export function AddExpenseDialog({
     try {
       const expenseData = {
         ...formData,
-        amount: parseFloat(formData.amount),
+        amount: formData.amount,
         date: formData.date.toISOString(),
       };
 
@@ -79,7 +79,7 @@ export function AddExpenseDialog({
 
       onSubmit?.({ ...expenseData, type: "expense" });
       setFormData({
-        amount: "",
+        amount: 0.0,
         category: "",
         description: "",
         date: new Date(),
@@ -121,7 +121,7 @@ export function AddExpenseDialog({
               placeholder="0.00"
               value={formData.amount}
               onChange={(e) =>
-                setFormData({ ...formData, amount: e.target.value })
+                setFormData({ ...formData, amount: parseFloat(e.target.value) })
               }
               className="text-lg font-semibold"
               required
@@ -248,7 +248,7 @@ export function AddIncomeDialog({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    amount: "",
+    amount: 0.0,
     source: "",
     description: "",
     date: new Date(),
@@ -276,7 +276,7 @@ export function AddIncomeDialog({
 
     try {
       const incomeData = {
-        amount: parseFloat(formData.amount),
+        amount: formData.amount,
         source: formData.source,
         description: formData.description,
         date: formData.date.toISOString(),
@@ -294,7 +294,7 @@ export function AddIncomeDialog({
 
       onSubmit?.({ ...incomeData, type: "income" });
       setFormData({
-        amount: "",
+        amount: 0.0,
         source: "",
         description: "",
         date: new Date(),
@@ -336,7 +336,7 @@ export function AddIncomeDialog({
               placeholder="0.00"
               value={formData.amount}
               onChange={(e) =>
-                setFormData({ ...formData, amount: e.target.value })
+                setFormData({ ...formData, amount: parseFloat(e.target.value) })
               }
               className="text-lg font-semibold"
               required
