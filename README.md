@@ -1,13 +1,16 @@
 # 👋 Introduction
-**Budge It** is a Personal Finance Tracking Web App, I am building to solve problems I face a lot. Now, I know the world didn't need another "budget tracking" app; but this still has some features which **students** will especially love (I know because I am one).
+**Budge It** is a Personal Finance Tracking Web App, I am building to solve problems I face a lot. Now, I know the world didn't need another "budget tracking" app; but this still has some features which **students** will like especially (I know because I am one).
+I am very bad with finance. This is mainly due to the fact that I only mentally account for any money in/out. Obviously this is a very stupid approach, but any solution I tried online had some things which I liked and some I didn't. So I built my own.
 
 ![Screenshot 2025-06-19 at 04-16-24 Vite React TS](https://github.com/user-attachments/assets/a394f2dc-46ce-408b-b95e-4a9dfb385546)
 
 ## 📝 Features
-- Google Drive integration - so I don't have to manage storage locally nor pay for any cloud storage (thank god)
-- Easy Instant Access - Using OAuth 2.0 with Firebase, anyone can login in just a *snap*.
-- Insights and Suggestions (very less AI slop, so don't worry 😅).
-- And did I mention the **easy pleasing and very clutter-free UI**
+- Easy Income/Expense Adding with category tags (and cool emojis).
+- Google Drive integration - so I don't have to manage storage locally nor pay for any cloud storage (thank god).
+- Loan/Debt Accounting (Helps me remember if I have to give or take money from someone since I always forget) *Planned*.
+- Insights and Suggestions (very less AI slop, so don't worry 😅) *Planned*.
+- Easy Quick Authentication - Using OAuth 2.0 with Firebase using Google only, anyone can login in just a *snap*.
+- And did I mention the **easy pleasing and very clutter-free UI**.
 
 ## 💻 Tech Stack
 MERN stack with **Google Drive** and **Firebase Authentication** integration. 
