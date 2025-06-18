@@ -484,5 +484,14 @@ function getMonthlySummary(transactions) {
   });
 
   // Sort days numerically and return as array
-  return Object.values(daysMap).sort((a, b) => Number(a.day) - Number(b.day));
+  return Object.values(
+    daysMap as Record<
+      string,
+      {
+        day: string;
+        income: number;
+        expenses: number;
+      }
+    >
+  ).sort((a, b) => Number(a.day) - Number(b.day));
 }
