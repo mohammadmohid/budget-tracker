@@ -1,3 +1,4 @@
+console.log("Poop");
 import { MongoClient } from "mongodb";
 
 // Replace the mongo db URI in the .env
