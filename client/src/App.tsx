@@ -5,9 +5,6 @@ import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import Profile from "./pages/Profile";
 import SidePanel from "./components/SidePanel";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 function App() {
   return (
