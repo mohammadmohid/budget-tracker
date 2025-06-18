@@ -1,10 +1,7 @@
 import { initializeApp } from "firebase/app";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API,
+  apiKey: import.meta.env.VITE_FIREBASE_API,
   authDomain: "budget-tracker-e5b3d.firebaseapp.com",
   projectId: "budget-tracker-e5b3d",
   storageBucket: "budget-tracker-e5b3d.firebasestorage.app",
