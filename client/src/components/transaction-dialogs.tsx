@@ -38,6 +38,7 @@ export function AddExpenseDialog({
     date: new Date(),
     paymentMethod: "card",
   });
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const expenseCategories = [
     { value: "food", label: "Food & Dining", icon: "🍽️" },
@@ -58,6 +59,7 @@ export function AddExpenseDialog({
       return;
     }
 
+    setIsSubmit(true);
     setLoading(true);
 
     try {
@@ -184,6 +186,16 @@ export function AddExpenseDialog({
               </PopoverContent>
             </Popover>
           </div>
+
+          {isSubmit && (
+            <div className="space-y-2">
+              <div className="bg-yellow-100 rounded-md p-2 text-yellow-600 text-sm">
+                Note: Backend service spins down with inactivity, which can
+                delay requests by 50 seconds or more. Currently temporary until
+                a reliable source of income is confirmed as I'm a student.
+              </div>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="paymentMethod">Payment Method</Label>

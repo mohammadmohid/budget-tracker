@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { DollarSign, Target, TrendingDown } from "lucide-react";
+import { DollarSign, Frown, Target, TrendingDown } from "lucide-react";
 import {
   AddExpenseDialog,
   AddIncomeDialog,
@@ -16,11 +16,15 @@ import {
   ResponsiveContainer,
   Area,
   AreaChart,
+  Legend,
 } from "recharts";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import axios from "@/utils/api/axios";
 import { toast } from "sonner";
+import React from "react";
+import { v4 as uuidv4 } from "uuid";
+import Skeleton from "@/components/Skeleton";
 
 const colors = {
   mint: "#4ade80",
@@ -31,15 +35,11 @@ const colors = {
   teal: "#2dd4bf",
 };
 
-const monthlyData = [
-  { month: "Apr", income: 3000, expenses: 2100, savings: 900 },
-  { month: "May", income: 2800, expenses: 2000, savings: 800 },
-  { month: "Jun", income: 2500, expenses: 1850, savings: 650 },
-];
-
 export default function DashboardPage() {
   const { accessToken, idToken } = useAuth();
   const [transactions, setTransactions] = useState([]);
+  const monthlyData = getMonthlySummary(transactions);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!accessToken || !idToken) return;
@@ -52,6 +52,7 @@ export default function DashboardPage() {
 
     const fetchTransactions = async () => {
       try {
+        setLoading(true);
         const [expensesRes, incomeRes] = await Promise.all([
           axios.get("/expenses", {
             headers: {
@@ -80,14 +81,12 @@ export default function DashboardPage() {
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
         );
 
-        const recentTransactions = combined.slice(0, 3);
+        // const recentTransactions = combined.slice(0, 3);
 
-        sessionStorage.setItem(
-          "recentTransactions",
-          JSON.stringify(recentTransactions)
-        );
+        sessionStorage.setItem("recentTransactions", JSON.stringify(combined));
 
-        setTransactions(recentTransactions);
+        setTransactions(combined);
+        setLoading(false);
       } catch (err) {
         toast.error("Failed to load transactions from Drive");
         console.error(err);
@@ -100,7 +99,7 @@ export default function DashboardPage() {
   const addTransaction = (transaction) => {
     const newTransaction = {
       ...transaction,
-      id: Date.now(),
+      id: uuidv4(),
       type: transaction.type,
       date: new Date().toISOString().split("T")[0],
     };
@@ -239,6 +238,24 @@ export default function DashboardPage() {
                 </NavLink>
               </div>
               <div className="space-y-3 max-h-80 overflow-y-auto">
+                {/* Empty Handling */}
+                {transactions.length === 0 && !loading && (
+                  <div className="flex gap-2">
+                    <Frown className="text-gray-600" />
+                    <span className="italic text-gray-600">
+                      Wow, very much empty.
+                    </span>
+                  </div>
+                )}
+
+                {/* Loading Animation */}
+                {loading && (
+                  <div className="space-y-3">
+                    <Skeleton className="w-full h-20 rounded-md" />
+                    <Skeleton className="w-full h-20 rounded-md" />
+                    <Skeleton className="w-full h-20 rounded-md" />
+                  </div>
+                )}
                 {transactions.slice(0, 3).map((transaction) => (
                   <TransactionItem
                     key={transaction.id}
@@ -256,7 +273,10 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <h3 className="text-lg font-semibold mb-4">Monthly Overview</h3>
               <ResponsiveContainer width="100%" height={250}>
-                <AreaChart data={monthlyData}>
+                <AreaChart
+                  data={monthlyData}
+                  margin={{ top: 0, right: 10, left: 30, bottom: 0 }}
+                >
                   <defs>
                     <linearGradient
                       id="incomeGradient"
@@ -296,9 +316,28 @@ export default function DashboardPage() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis dataKey="month" stroke="#6B7280" />
-                  <YAxis stroke="#6B7280" />
+                  <XAxis
+                    dataKey="day"
+                    stroke="#6B7280"
+                    label={{
+                      value: "Date",
+                      position: "insideBottomRight",
+                      offset: -10,
+                      style: { fill: "#64748b", fontSize: 12 },
+                    }}
+                  />
+                  <YAxis
+                    stroke="#6B7280"
+                    label={{
+                      value: "Total (PKR)",
+                      position: "insideLeft",
+                      angle: -90,
+                      offset: -25,
+                      style: { fill: "#64748b", fontSize: 12 },
+                    }}
+                  />
                   <Tooltip />
+                  <Legend verticalAlign="bottom" />
                   <Area
                     type="monotone"
                     dataKey="income"
@@ -387,20 +426,63 @@ function StatCard({ title, value, icon, trend, trendUp, color }) {
   );
 }
 
-function QuickActionButton({ icon, label, color, onClick }) {
-  return (
-    <Button
-      variant="outline"
-      className="h-20 flex-col gap-2 border hover: transition-all duration-200 w-full"
-      style={{
-        backgroundColor: `${color}10`,
-        borderColor: `${color}30`,
-        color: color,
-      }}
-      onClick={onClick}
-    >
-      <span className="text-2xl">{icon}</span>
-      <span className="text-sm font-medium">{label}</span>
-    </Button>
-  );
+type QuickActionButtonProps = {
+  icon: React.ReactNode;
+  label: string;
+  color: string;
+  onClick?: () => void;
+};
+
+export const QuickActionButton = React.forwardRef<
+  HTMLButtonElement,
+  QuickActionButtonProps
+>(({ icon, label, color, onClick }, ref) => (
+  <Button
+    ref={ref}
+    variant="outline"
+    className="h-20 flex-col gap-2 border hover: transition-all duration-200 w-full"
+    style={{
+      backgroundColor: `${color}10`,
+      borderColor: `${color}30`,
+      color: color,
+    }}
+    onClick={onClick}
+  >
+    <span className="text-2xl">{icon}</span>
+    <span className="text-sm font-medium">{label}</span>
+  </Button>
+));
+
+QuickActionButton.displayName = "QuickActionButton";
+
+function getMonthlySummary(transactions) {
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const daysMap = {};
+
+  transactions.forEach((t) => {
+    const date = new Date(t.date);
+    if (
+      date.getMonth() === currentMonth &&
+      date.getFullYear() === currentYear
+    ) {
+      const day = date.getDate(); // 1–31 days
+      const key = String(day).padStart(2, "0");
+
+      if (!daysMap[key]) {
+        daysMap[key] = { day: key, income: 0, expenses: 0 };
+      }
+
+      if (t.type === "income") {
+        daysMap[key].income += t.amount;
+      } else if (t.type === "expense") {
+        daysMap[key].expenses += t.amount;
+      }
+    }
+  });
+
+  // Sort days numerically and return as array
+  return Object.values(daysMap).sort((a, b) => Number(a.day) - Number(b.day));
 }
