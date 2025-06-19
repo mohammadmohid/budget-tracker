@@ -1,6 +1,6 @@
 # 👋 Introduction
-**Budge It** is a Personal Finance Tracking Web App, I am building to solve problems I face a lot. Now, I know the world didn't need another "budget tracking" app; but this still has some features which **students** will like especially (I know because I am one).
-I am very bad with finance. This is mainly due to the fact that I only mentally account for any money in/out. Obviously this is a very stupid approach, but any solution I tried online had some things which I liked and some I didn't. So I built my own.
+**Budge It** is a Personal Finance Tracking Web App, I am building to solve a problem I face a lot. Now, I know the world didn't need another "budget tracking" app; but this still has some features which I and **students** will like especially (I know because I am one).
+I am not the best with finance, especially budgeting. This is mainly due to the fact that I only mentally account for any money in/out. Obviously this is a very stupid approach, but any solution I tried online didn't help me the way I wanted. So I built my own.
 
 ![Screenshot 2025-06-19 at 04-16-24 Vite React TS](https://github.com/user-attachments/assets/a394f2dc-46ce-408b-b95e-4a9dfb385546)
 
