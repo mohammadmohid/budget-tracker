@@ -9,7 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { handleLogout } from "@/utils/api/user_API";
 import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Skeleton from "./Skeleton";
+import Skeleton from "./skeleton";
 
 interface AccountPillProps {
   loading: boolean;

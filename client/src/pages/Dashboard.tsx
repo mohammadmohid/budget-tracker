@@ -24,7 +24,7 @@ import axios from "@/utils/api/axios";
 import { toast } from "sonner";
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import Skeleton from "@/components/Skeleton";
+import Skeleton from "@/components/skeleton";
 
 const colors = {
   mint: "#4ade80",

@@ -1,10 +1,10 @@
 import { Route, Routes } from "react-router-dom";
-import NavBar from "./components/NavBar";
+import NavBar from "./components/nav-bar";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import Profile from "./pages/Profile";
-import SidePanel from "./components/SidePanel";
+import SidePanel from "./components/side-panel";
 
 function App() {
   return (

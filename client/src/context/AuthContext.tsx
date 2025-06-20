@@ -6,9 +6,10 @@ import {
   useContext,
   useCallback,
 } from "react";
-import { auth } from "../utils/api/user_API";
 import { useLocation, useNavigate } from "react-router-dom";
-import { TokenStorage } from "../utils/tokenStorage";
+import { auth, reauthenticateGoogleUser } from "@/utils/api/user_API";
+import { TokenStorage } from "@/utils/tokenStorage";
+import { initializeGoogleClient } from "@/utils/api/googleAuth";
 
 interface AuthContextType {
   user: User | null;
@@ -53,25 +54,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!user) return false;
 
     try {
-      // Always try to get fresh Firebase token
       const freshIdToken = await user.getIdToken(true);
 
-      // Check if we need to refresh Google token
-      const storedGoogleToken = TokenStorage.getGoogleAccessToken();
-
-      if (!storedGoogleToken || TokenStorage.isGoogleTokenExpiringSoon()) {
-        console.warn(
-          "Google access token missing or expiring soon. User needs to re-authenticate with Google."
+      let googleAccessToken = TokenStorage.getGoogleAccessToken();
+      if (!googleAccessToken || TokenStorage.isGoogleTokenExpiringSoon()) {
+        const silentAccessToken = await initializeGoogleClient(
+          import.meta.env.VITE_GOOGLE_CLIENT_ID
         );
-        // You might want to trigger a re-authentication flow here
-        return false;
+
+        if (!silentAccessToken) {
+          console.warn("Silent reauth failed. Attempting popup reauth...");
+          const fallbackToken = await reauthenticateGoogleUser(user);
+          if (!fallbackToken) {
+            console.error("Popup reauth failed. User interaction required.");
+            return false;
+          }
+          googleAccessToken = fallbackToken;
+        } else {
+          googleAccessToken = silentAccessToken;
+        }
+
+        TokenStorage.setGoogleAccessToken(googleAccessToken);
       }
 
-      // Update tokens
-      setTokens(storedGoogleToken, freshIdToken);
+      setTokens(googleAccessToken, freshIdToken);
       return true;
     } catch (error) {
-      console.error("Error refreshing tokens:", error);
+      console.error("Token refresh failed:", error);
       return false;
     }
   }, [user, setTokens]);

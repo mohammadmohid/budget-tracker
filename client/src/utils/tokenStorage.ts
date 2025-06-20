@@ -1,72 +1,36 @@
 interface TokenData {
   value: string;
   expiry: number;
-  timestamp: number;
 }
 
 export class TokenStorage {
   private static GOOGLE_TOKEN_KEY = "googleAccessToken";
   private static FIREBASE_TOKEN_KEY = "firebaseIdToken";
 
-  // Google tokens typically expire in 1 hour
-  private static GOOGLE_TOKEN_EXPIRY = 60 * 60 * 1000; // 1 hour
-  private static FIREBASE_TOKEN_EXPIRY = 60 * 60 * 1000; // 1 hour
-
-  static setGoogleAccessToken(token: string): void {
+  static setToken(key: string, value: string, expiryMs: number): void {
     const tokenData: TokenData = {
-      value: token,
-      expiry: Date.now() + this.GOOGLE_TOKEN_EXPIRY,
-      timestamp: Date.now(),
+      value,
+      expiry: Date.now() + expiryMs,
     };
-    localStorage.setItem(this.GOOGLE_TOKEN_KEY, JSON.stringify(tokenData));
+    localStorage.setItem(key, JSON.stringify(tokenData));
   }
 
-  static getGoogleAccessToken(): string | null {
-    const stored = localStorage.getItem(this.GOOGLE_TOKEN_KEY);
+  static getToken(key: string): string | null {
+    const stored = localStorage.getItem(key);
     if (!stored) return null;
 
     try {
-      const tokenData: TokenData = JSON.parse(stored);
+      const { value, expiry }: TokenData = JSON.parse(stored);
 
       // Check if token is expired
-      if (Date.now() > tokenData.expiry) {
-        localStorage.removeItem(this.GOOGLE_TOKEN_KEY);
+      if (Date.now() > expiry) {
+        localStorage.removeItem(key);
         return null;
       }
-
-      return tokenData.value;
+      return value;
     } catch (err) {
-      console.error("Error while fetching access token: ", err);
-      localStorage.removeItem(this.GOOGLE_TOKEN_KEY);
-      return null;
-    }
-  }
-
-  static setFirebaseIdToken(token: string): void {
-    const tokenData: TokenData = {
-      value: token,
-      expiry: Date.now() + this.FIREBASE_TOKEN_EXPIRY,
-      timestamp: Date.now(),
-    };
-    localStorage.setItem(this.FIREBASE_TOKEN_KEY, JSON.stringify(tokenData));
-  }
-
-  static getFirebaseIdToken(): string | null {
-    const stored = localStorage.getItem(this.FIREBASE_TOKEN_KEY);
-    if (!stored) return null;
-
-    try {
-      const tokenData: TokenData = JSON.parse(stored);
-
-      if (Date.now() > tokenData.expiry) {
-        localStorage.removeItem(this.FIREBASE_TOKEN_KEY);
-        return null;
-      }
-
-      return tokenData.value;
-    } catch (err) {
-      console.error("Error while fetching id token: ", err);
-      localStorage.removeItem(this.FIREBASE_TOKEN_KEY);
+      console.error(`Error fetching ${key}:`, err);
+      localStorage.removeItem(key);
       return null;
     }
   }
@@ -76,16 +40,35 @@ export class TokenStorage {
     localStorage.removeItem(this.FIREBASE_TOKEN_KEY);
   }
 
-  static isGoogleTokenExpiringSoon(): boolean {
-    const stored = localStorage.getItem(this.GOOGLE_TOKEN_KEY);
+  static isTokenExpiringSoon(
+    key: string,
+    thresholdMs = 5 * 60 * 1000
+  ): boolean {
+    const stored = localStorage.getItem(key);
     if (!stored) return true;
 
     try {
-      const tokenData: TokenData = JSON.parse(stored);
-      const timeToExpiry = tokenData.expiry - Date.now();
-      return timeToExpiry < 5 * 60 * 1000; // Less than 5 minutes left
+      const { expiry }: TokenData = JSON.parse(stored);
+      return expiry - Date.now() < thresholdMs;
     } catch {
       return true;
     }
+  }
+
+  static setGoogleAccessToken(token: string): void {
+    this.setToken(this.GOOGLE_TOKEN_KEY, token, 60 * 60 * 1000);
+  }
+  static getGoogleAccessToken(): string | null {
+    return this.getToken(this.GOOGLE_TOKEN_KEY);
+  }
+  static isGoogleTokenExpiringSoon(): boolean {
+    return this.isTokenExpiringSoon(this.GOOGLE_TOKEN_KEY);
+  }
+
+  static setFirebaseIdToken(token: string): void {
+    this.setToken(this.FIREBASE_TOKEN_KEY, token, 60 * 60 * 1000);
+  }
+  static getFirebaseIdToken(): string | null {
+    return this.getToken(this.FIREBASE_TOKEN_KEY);
   }
 }

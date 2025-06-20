@@ -1,6 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import { handleLogin } from "../utils/api/user_API";
-import Skeleton from "./Skeleton";
+import Skeleton from "./skeleton";
 import GoogleIcon from "/google.svg.webp";
 import { Button } from "@/components/ui/button";
 import AccountPill from "./account-pill";
